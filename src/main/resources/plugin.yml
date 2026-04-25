@@ -1,0 +1,22 @@
+name: BetterRTP
+version: 'SNAPSHOT'
+main: dev.betterrtp.BetterRTP
+api-version: '1.21'
+folia-supported: true
+description: xx
+commands:
+  rtp:
+    description: Öffnet das Menü
+    usage: /<command>
+    permission: rtp.use
+
+permissions:
+  rtp.use:
+    description: Erlaubt die Verwendung von /rtp
+    default: true
+  rtp.bypass.cooldown:
+    description: Überspringt den Cooldown für /rtp
+    default: false
+  rtp.admin:
+    description: erlaubt /rtp reload)
+    default: op

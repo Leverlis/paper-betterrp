@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id("xyz.jpenilla.run-paper") version "3.0.2"
+}
+
+// Ausgaben unter .build/ — Standard wäre build/; so gibt es keinen Namenskonflikt mit einer Datei „build“.
+layout.buildDirectory.set(layout.projectDirectory.dir('.build'))
+
+group = "dev.betterrtp"
+version = "SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+tasks {
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from({ configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } })
+    }
+
+    compileJava {
+        options.encoding = "UTF-8"
+        options.release.set(21)
+    }
+
+    runServer {
+        minecraftVersion("1.21.11")
+
+        jvmArgs(
+            "-Dcom.mojang.eula.agree=true",
+            "-DIReallyKnowWhatIAmDoingISwear"
+        )
+
+        dependsOn("build")
+    }
+}

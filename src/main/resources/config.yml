@@ -1,0 +1,113 @@
+# => Plugin lädt keine Chunks vor! Nutz am besten Chunky oder irgende andere Pre-Generator Tools, um die Welt vorzuladen.
+
+
+# ──────────────────────────────────────────────
+#  Grundkonfiguration
+# ──────────────────────────────────────────────
+
+# Cooldown in Sekunden, bevor /rtp erneut genutzt werden darf.
+cooldown: 10
+
+# Maximale Versuche, eine gültige Position zu finden. > Sonst Failure
+max-attempts: 20
+
+# Vorgecachte Positionen pro Dimension fürs vorreservieren
+pool-size: 5
+
+# Delay bevor der Spieler teleportiert wird. 
+teleport-delay: 0 # Sekunden
+
+# Wie lange die Nachricht über der Actionbar angezeigt wird 
+actionbar-duration: 3 # Sekunden
+
+# ──────────────────────────────────────────────
+#  Sound Effekte nach dem Teleport
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# ──────────────────────────────────────────────
+sound: ENTITY_ENDERMAN_TELEPORT         # sound: NONE  → kein Sound
+sound-volume: 1.0
+sound-pitch:  1.0
+
+# ──────────────────────────────────────────────
+# Partikel Effekte vor- wie auch nach dem Teleport
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# ──────────────────────────────────────────────
+particle: POOF                          # particle: NONE  → kein Effekt
+particle-count:  20    
+particle-spread-x: 0.3
+particle-spread-y: 0.5
+particle-spread-z: 0.3
+particle-speed:  0.05 
+
+# ──────────────────────────────────────────────
+#  Einstellungen pro Dimension
+# ──────────────────────────────────────────────
+
+overworld: 
+  min-spawn-distance: 0   # Mindestabstand vom Welt-Spawn 
+  max-spawn-distance: 1000  # Maximalabstand vom Welt-Spawn
+  min-player-distance: 200   # Mindestabstand zu anderen Spielern
+
+nether:
+  min-spawn-distance: 500 # Blöcke
+  max-spawn-distance: 5000
+  min-player-distance: 100     
+
+end:
+  min-spawn-distance: 1500
+  max-spawn-distance: 10000
+  min-player-distance: 200
+
+# ──────────────────────────────────────────────
+# Biome, in den der User nicht teleportiert werden darf.
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/block/Biome.html
+# ──────────────────────────────────────────────
+biome-blacklist:
+  - OCEAN
+  - DEEP_OCEAN
+  - FROZEN_OCEAN
+  - DEEP_FROZEN_OCEAN
+  - COLD_OCEAN
+  - DEEP_COLD_OCEAN
+  - LUKEWARM_OCEAN
+  - DEEP_LUKEWARM_OCEAN
+  - WARM_OCEAN
+  - MUSHROOM_FIELDS
+  - DEEP_DARK
+
+# ──────────────────────────────────────────────
+# Blöcke, auf die der Spieler nicht teleportiert werden darf.
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# ──────────────────────────────────────────────
+block-blacklist:
+  - LAVA                   
+  - WATER                  
+  - FIRE                   
+  - SOUL_FIRE              
+  - CACTUS                 
+  - MAGMA_BLOCK            
+  - SWEET_BERRY_BUSH       
+  - WITHER_ROSE            
+  - POWDER_SNOW            
+  - CAMPFIRE               
+  - SOUL_CAMPFIRE          
+  - POINTED_DRIPSTONE      
+  - COBWEB                 
+  - BAMBOO
+
+# ──────────────────────────────────────────────
+#  Nachrichten
+#  https://docs.advntr.dev/minimessage/format.html
+# ──────────────────────────────────────────────
+messages:
+  no-permission: "<red>ᴅᴜ ʜᴀꜱᴛ ᴋᴇɪɴᴇ ʙᴇʀᴇᴄʜᴛɪɢᴜɴɢ, /ʀᴛᴘ ᴢᴜ ᴠᴇʀᴡᴇɴᴅᴇɴ.</red>"
+  no-permission-admin: "<red>ᴅᴜ ʜᴀꜱᴛ ᴋᴇɪɴᴇ ʙᴇʀᴇᴄʜᴛɪɢᴜɴɢ ꜰüʀ ᴅɪᴇꜱᴇɴ ʙᴇꜰᴇʜʟ.</red>"
+  cooldown: "<gray><bold>»</bold></gray> <red>ʙɪᴛᴛᴇ ᴡᴀʀᴛᴇ ɴᴏᴄʜ <white><bold>{remaining}s</bold></white>....</red>" # {remaining}
+  not-found: "<red>ᴋᴇɪɴᴇ ꜱɪᴄʜᴇʀᴇ ᴘᴏꜱɪᴛɪᴏɴ ɢᴇꜰᴜɴᴅᴇɴ. ᴠᴇʀꜱᴜᴄʜᴇ ᴇꜱ ᴇʀɴᴇᴜᴛ.</red>"
+  teleport-failed: "<red>ᴛᴇʟᴇᴘᴏʀᴛᴀᴛɪᴏɴ ꜰᴇʜʟɢᴇꜱᴄʜʟᴀɢᴇɴ. ᴠᴇʀꜱᴜᴄʜᴇ ᴇꜱ ᴇʀɴᴇᴜᴛ.</red>"
+  dimension-unavailable: "<red>ᴅɪᴇ ᴢɪᴇʟ-ᴅɪᴍᴇɴꜱɪᴏɴ ɪꜱᴛ ᴀᴜꜰ ᴅɪᴇꜱᴇᴍ ꜱᴇʀᴠᴇʀ ɴɪᴄʜᴛ ᴠᴇʀꜰüɢʙᴀʀ.</red>"
+  reload-success: "<gray><bold>»</bold></gray> <green><bold>BetterRTP wurde neu geladen.</bold></green>"
+  searching: ""
+  dimension-overworld: <gray>»</gray> <gradient:#4ade80:#16a34a><b>ᴏᴠᴇʀᴡᴏʀʟᴅ</b></gradient> <gray>«</gray>
+  dimension-nether: <gray>»</gray> <gradient:#991b1b:#ef4444><b>ɴᴇᴛʜᴇʀ</b></gradient> <gray>«</gray>
+  dimension-end: <gray>»</gray> <gradient:#a78bfa:#8b5cf6><b>ᴛʜᴇ</b></gradient><gradient:#8b5cf6:#a78bfa><b> ᴇɴᴅ</b></gradient> <gray>«</gray>
