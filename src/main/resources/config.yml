@@ -1,6 +1,3 @@
-# => Plugin lädt keine Chunks vor! Nutz am besten Chunky oder irgende andere Pre-Generator Tools, um die Welt vorzuladen.
-
-
 # ──────────────────────────────────────────────
 #  Grundkonfiguration
 # ──────────────────────────────────────────────
@@ -15,10 +12,7 @@ max-attempts: 20
 pool-size: 5
 
 # Delay bevor der Spieler teleportiert wird. 
-teleport-delay: 0 # Sekunden
-
-# Wie lange die Nachricht über der Actionbar angezeigt wird 
-actionbar-duration: 3 # Sekunden
+teleport-delay: 5 # Sekunden
 
 # ──────────────────────────────────────────────
 #  Sound Effekte nach dem Teleport
@@ -29,6 +23,22 @@ sound-volume: 1.0
 sound-pitch:  1.0
 
 # ──────────────────────────────────────────────
+#  Sound beim Start des Teleport-Delays (einmalig)
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# ──────────────────────────────────────────────
+start-sound: BLOCK_NOTE_BLOCK_PLING     # start-sound: NONE  → kein Start-Sound
+start-sound-volume: 0.6
+start-sound-pitch:  1.2
+
+# ──────────────────────────────────────────────
+#  Sound wenn die Teleportation abgebrochen wird
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# ──────────────────────────────────────────────
+cancel-sound: BLOCK_NOTE_BLOCK_BASS     # cancel-sound: NONE  → kein Abbruch-Sound
+cancel-sound-volume: 0.8
+cancel-sound-pitch:  0.5
+
+# ──────────────────────────────────────────────
 # Partikel Effekte vor- wie auch nach dem Teleport
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 # ──────────────────────────────────────────────
@@ -37,7 +47,19 @@ particle-count:  20
 particle-spread-x: 0.3
 particle-spread-y: 0.5
 particle-spread-z: 0.3
-particle-speed:  0.05 
+particle-speed:  0.05
+
+# ──────────────────────────────────────────────
+#  Wendeltreppen-/Helix-Animation während des Teleport-Delays
+#  Bis zu drei Partikel werden im Wechsel auf die Spiralstränge verteilt,
+#  zusätzlich werden innere "Stufen"-Akzente und ein zentraler Funke gesetzt.
+#  Trotzdem sparsam: ca. 25 Partikel pro Sekunde.
+#  Liste leer lassen → keine Helix.
+# ──────────────────────────────────────────────
+helix-particles:
+  - END_ROD
+  - ELECTRIC_SPARK
+  - WAX_OFF
 
 # ──────────────────────────────────────────────
 #  Einstellungen pro Dimension
@@ -49,7 +71,7 @@ overworld:
   min-player-distance: 200   # Mindestabstand zu anderen Spielern
 
 nether:
-  min-spawn-distance: 500 # Blöcke
+  min-spawn-distance: 500 
   max-spawn-distance: 5000
   min-player-distance: 100     
 
@@ -103,11 +125,10 @@ messages:
   no-permission: "<red>ᴅᴜ ʜᴀꜱᴛ ᴋᴇɪɴᴇ ʙᴇʀᴇᴄʜᴛɪɢᴜɴɢ, /ʀᴛᴘ ᴢᴜ ᴠᴇʀᴡᴇɴᴅᴇɴ.</red>"
   no-permission-admin: "<red>ᴅᴜ ʜᴀꜱᴛ ᴋᴇɪɴᴇ ʙᴇʀᴇᴄʜᴛɪɢᴜɴɢ ꜰüʀ ᴅɪᴇꜱᴇɴ ʙᴇꜰᴇʜʟ.</red>"
   cooldown: "<gray><bold>»</bold></gray> <red>ʙɪᴛᴛᴇ ᴡᴀʀᴛᴇ ɴᴏᴄʜ <white><bold>{remaining}s</bold></white>....</red>" # {remaining}
-  not-found: "<red>ᴋᴇɪɴᴇ ꜱɪᴄʜᴇʀᴇ ᴘᴏꜱɪᴛɪᴏɴ ɢᴇꜰᴜɴᴅᴇɴ. ᴠᴇʀꜱᴜᴄʜᴇ ᴇꜱ ᴇʀɴᴇᴜᴛ.</red>"
-  teleport-failed: "<red>ᴛᴇʟᴇᴘᴏʀᴛᴀᴛɪᴏɴ ꜰᴇʜʟɢᴇꜱᴄʜʟᴀɢᴇɴ. ᴠᴇʀꜱᴜᴄʜᴇ ᴇꜱ ᴇʀɴᴇᴜᴛ.</red>"
-  dimension-unavailable: "<red>ᴅɪᴇ ᴢɪᴇʟ-ᴅɪᴍᴇɴꜱɪᴏɴ ɪꜱᴛ ᴀᴜꜰ ᴅɪᴇꜱᴇᴍ ꜱᴇʀᴠᴇʀ ɴɪᴄʜᴛ ᴠᴇʀꜰüɢʙᴀʀ.</red>"
-  reload-success: "<gray><bold>»</bold></gray> <green><bold>BetterRTP wurde neu geladen.</bold></green>"
-  searching: ""
-  dimension-overworld: <gray>»</gray> <gradient:#4ade80:#16a34a><b>ᴏᴠᴇʀᴡᴏʀʟᴅ</b></gradient> <gray>«</gray>
-  dimension-nether: <gray>»</gray> <gradient:#991b1b:#ef4444><b>ɴᴇᴛʜᴇʀ</b></gradient> <gray>«</gray>
-  dimension-end: <gray>»</gray> <gradient:#a78bfa:#8b5cf6><b>ᴛʜᴇ</b></gradient><gradient:#8b5cf6:#a78bfa><b> ᴇɴᴅ</b></gradient> <gray>«</gray>
+  error: "<red>ᴇꜱ ɪꜱᴛ ᴇɪɴ ꜰᴇʜʟᴇʀ ᴀᴜꜰɢᴇᴛʀᴇᴛᴇɴ, ʙɪᴛᴛᴇ ᴠᴇʀꜱᴜᴄʜᴇ ᴇꜱ ᴇʀɴᴇᴜᴛ...</red>"
+  reload-success: "<gray><bold>»</bold></gray> <green><bold>ʙᴇᴛᴛᴇʀʀᴛᴘ ᴡᴜʀᴅᴇ ɴᴇᴜ ɢᴇʟᴀᴅᴇɴ</bold></green>"
+  moved: "<red>ᴛᴇʟᴇᴘᴏʀᴛᴀᴛɪᴏɴ ᴀʙɢᴇʙʀᴏᴄʜᴇɴ</red>"
+  countdown: "<gradient:#a855f7:#7c3aed>ᴛᴇʟᴇᴘᴏʀᴛᴀᴛɪᴏɴ ɪɴ</gradient> <white><bold>{seconds}s</bold></white>"
+  dimension-overworld: "<gradient:#4ade80:#16a34a><b>ᴏᴠᴇʀᴡᴏʀʟᴅ</b></gradient>"
+  dimension-nether: "<gradient:#991b1b:#ef4444><b>ɴᴇᴛʜᴇʀ</b></gradient>"
+  dimension-end: "<gradient:#a78bfa:#8b5cf6><b>ᴛʜᴇ</b></gradient><gradient:#8b5cf6:#a78bfa><b> ᴇɴᴅ</b></gradient>"

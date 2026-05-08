@@ -18,18 +18,15 @@ import java.util.Map;
 
 public final class DimensionGui {
 
-    // Titel: eigenes Hintergrundbild über Resourcepack-Font (better_rtp:rtp_gui).
-    // \uF808 verschiebt den Cursor -8px (Inventar-Text startet bei x=8 → x=0),
-    // \uE100 rendert rtp_gui.png über das gesamte GUI.
-    public static final String GUI_TITLE = "<white><font:better_rtp:rtp_gui>\uF808\uE100</font:better_rtp:rtp_gui></white>";
+    public static final String GUI_TITLE = "ʀᴀɴᴅᴏᴍ ᴛᴇʟᴇᴘᴏʀᴛ";
 
     // Einmalig geparster GUI-Titel – spart wiederholtes MiniMessage-Parsing bei jedem Öffnen
     private static final Component GUI_TITLE_COMPONENT = Messages.parse(GUI_TITLE);
 
-    // Slot-Gruppen pro Dimension (0-basiert), je 3×3 Block
-    public static final int[] SLOTS_OVERWORLD = {0,  1,  2,  9, 10, 11, 18, 19, 20};
-    public static final int[] SLOTS_NETHER    = {3,  4,  5, 12, 13, 14, 21, 22, 23};
-    public static final int[] SLOTS_END       = {6,  7,  8, 15, 16, 17, 24, 25, 26};
+    // Slot-Gruppen pro Dimension (0-basiert)
+    public static final int[] SLOTS_OVERWORLD = {10};
+    public static final int[] SLOTS_NETHER    = {13};
+    public static final int[] SLOTS_END       = {16};
 
     /** Jeden Slot-Index O(1) auf seine Dimension mappen für den Click-Listener. */
     public static final Map<Integer, World.Environment> SLOT_ENV_MAP;
@@ -41,18 +38,18 @@ public final class DimensionGui {
         SLOT_ENV_MAP = Collections.unmodifiableMap(map);
     }
 
-    // Items einmalig beim Klassenload erstellen – STRUCTURE_VOID wird vollständig vom Resourcepack überschrieben
-    private static final ItemStack ITEM_OVERWORLD = buildItem(
-            Material.STRUCTURE_VOID,
-            "<white>» ᴛᴇʟᴇᴘᴏʀᴛɪᴇʀᴇ ᴅɪᴄʜ ɪɴ ᴅɪᴇ ᴏᴠᴇʀᴡᴏʀʟᴅ</white>",
+    // Repräsentative Blöcke pro Dimension (Slots 11 / 14 / 17)
+    private static final ItemStack ITEM_GRASS = buildItem(
+            Material.GRASS_BLOCK,
+            "<gradient:#7dff8a:#2e8b57>ᴏᴠᴇʀᴡᴏʀʟᴅ</gradient>",
             List.of());
-    private static final ItemStack ITEM_NETHER = buildItem(
-            Material.STRUCTURE_VOID,
-            "<white>» ᴛᴇʟᴇᴘᴏʀᴛɪᴇʀᴇ ᴅɪᴄʜ ɪɴ ᴅᴇɴ ɴᴇᴛʜᴇʀ</white>",
+    private static final ItemStack ITEM_NETHERRACK = buildItem(
+            Material.NETHERRACK,
+            "<gradient:#ff4d4d:#7a0000>ɴᴇᴛʜᴇʀ</gradient>",
             List.of());
-    private static final ItemStack ITEM_END = buildItem(
-            Material.STRUCTURE_VOID,
-            "<white>» ᴛᴇʟᴇᴘᴏʀᴛɪᴇʀᴇ ᴅɪᴄʜ ɪɴꜱ ᴛʜᴇ ᴇɴᴅ</white>",
+    private static final ItemStack ITEM_END_STONE = buildItem(
+            Material.END_STONE,
+            "<gradient:#9d50bb:#ff4fd8>ᴛʜᴇ ᴇɴᴅ</gradient>",
             List.of());
 
     private DimensionGui() {}
@@ -62,9 +59,10 @@ public final class DimensionGui {
         Inventory inv = Bukkit.createInventory(holder, 27, GUI_TITLE_COMPONENT);
         holder.setInventory(inv);
 
-        for (int s : SLOTS_OVERWORLD) inv.setItem(s, ITEM_OVERWORLD.clone());
-        for (int s : SLOTS_NETHER)    inv.setItem(s, ITEM_NETHER.clone());
-        for (int s : SLOTS_END)       inv.setItem(s, ITEM_END.clone());
+        // Nur die repr\u00e4sentativen Bl\u00f6cke in die Mittel-Slots setzen
+        inv.setItem(10, ITEM_GRASS.clone());
+        inv.setItem(13, ITEM_NETHERRACK.clone());
+        inv.setItem(16, ITEM_END_STONE.clone());
 
         return inv;
     }

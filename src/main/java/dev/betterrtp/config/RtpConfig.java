@@ -10,9 +10,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -23,17 +25,25 @@ public class RtpConfig {
     private final int maxAttempts;
     private final int poolSize;
     private final int teleportDelay;
-    private final int actionbarDuration;
 
     private final Sound sound;
     private final float soundVolume;
     private final float soundPitch;
+    private final Sound startSound;
+    private final float startSoundVolume;
+    private final float startSoundPitch;
+    private final Sound cancelSound;
+    private final float cancelSoundVolume;
+    private final float cancelSoundPitch;
     private final Particle particle;
     private final int particleCount;
     private final double particleSpreadX;
     private final double particleSpreadY;
     private final double particleSpreadZ;
     private final double particleSpeed;
+
+    /** Bis zu drei Partikel; werden im Wechsel auf die Helix-Stränge verteilt. */
+    private final List<Particle> helixParticles;
 
     private final DimensionConfig overworld;
     private final DimensionConfig nether;
@@ -49,31 +59,30 @@ public class RtpConfig {
         this.maxAttempts = Math.max(1, config.getInt("max-attempts", 50));
         this.poolSize    = Math.max(1, config.getInt("pool-size", 5));
         this.teleportDelay     = Math.max(0, config.getInt("teleport-delay", 0)) * 20;
-        this.actionbarDuration = Math.max(0, config.getInt("actionbar-duration", 3));
 
         String soundName = config.getString("sound", "ENTITY_ENDERMAN_TELEPORT");
-        Sound parsedSound = null;
-        if (!"NONE".equalsIgnoreCase(soundName)) {
-            // Bukkit enum names use underscores (ENTITY_ENDERMAN_TELEPORT),
-            // but the Minecraft registry uses dots (entity.enderman.teleport).
-            String soundKey = soundName.toLowerCase(Locale.ROOT).replace('_', '.');
-            parsedSound = Registry.SOUNDS.get(NamespacedKey.minecraft(soundKey));
-        }
-        this.sound       = parsedSound;
+        this.sound       = parseSound(soundName);
         this.soundVolume = (float) config.getDouble("sound-volume", 1.0);
         this.soundPitch  = (float) config.getDouble("sound-pitch", 1.0);
 
-        String particleName = config.getString("particle", "POOF");
-        Particle parsedParticle = null;
-        if (!"NONE".equalsIgnoreCase(particleName)) {
-            try { parsedParticle = Particle.valueOf(particleName); } catch (IllegalArgumentException ignored) {}
-        }
-        this.particle        = parsedParticle;
+        String startSoundName = config.getString("start-sound", "BLOCK_NOTE_BLOCK_PLING");
+        this.startSound       = parseSound(startSoundName);
+        this.startSoundVolume = (float) config.getDouble("start-sound-volume", 0.6);
+        this.startSoundPitch  = (float) config.getDouble("start-sound-pitch", 1.2);
+
+        String cancelSoundName = config.getString("cancel-sound", "BLOCK_NOTE_BLOCK_BASS");
+        this.cancelSound       = parseSound(cancelSoundName);
+        this.cancelSoundVolume = (float) config.getDouble("cancel-sound-volume", 0.8);
+        this.cancelSoundPitch  = (float) config.getDouble("cancel-sound-pitch", 0.5);
+
+        this.particle        = parseParticle(config.getString("particle", "POOF"));
         this.particleCount   = config.getInt("particle-count", 20);
         this.particleSpreadX = config.getDouble("particle-spread-x", 0.3);
         this.particleSpreadY = config.getDouble("particle-spread-y", 0.5);
         this.particleSpreadZ = config.getDouble("particle-spread-z", 0.3);
         this.particleSpeed   = config.getDouble("particle-speed", 0.05);
+
+        this.helixParticles = parseHelixParticles(config);
 
         this.overworld = new DimensionConfig(getSection(config, "overworld"));
         this.nether    = new DimensionConfig(getSection(config, "nether"));
@@ -110,23 +119,76 @@ public class RtpConfig {
         return sec != null ? sec : new MemoryConfiguration();
     }
 
+    /** Parst einen Sound-Namen (Bukkit-Enum-Name oder NONE). */
+    private static Sound parseSound(String name) {
+        if ("NONE".equalsIgnoreCase(name) || name == null) return null;
+        try {
+            return Sound.valueOf(name.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    /** Parst einen Partikel-Namen (Bukkit-Enum-Name oder NONE). */
+    private static Particle parseParticle(String name) {
+        if (name == null || "NONE".equalsIgnoreCase(name)) return null;
+        try {
+            return Particle.valueOf(name.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Liest bis zu drei Helix-Partikel aus der Config. Akzeptiert sowohl eine Liste
+     * unter {@code helix-particles} als auch einen Single-String unter
+     * {@code helix-particle} für Abwärtskompatibilität. Ungültige oder "NONE"-Einträge
+     * werden verworfen; max. drei Partikel.
+     */
+    private static List<Particle> parseHelixParticles(FileConfiguration config) {
+        List<String> raw;
+        if (config.isList("helix-particles")) {
+            raw = config.getStringList("helix-particles");
+        } else {
+            String single = config.getString("helix-particles",
+                    config.getString("helix-particle", "END_ROD"));
+            raw = single == null ? List.of() : List.of(single);
+        }
+        List<Particle> out = new ArrayList<>(3);
+        for (String name : raw) {
+            if (out.size() >= 3) break;
+            Particle p = parseParticle(name);
+            if (p != null) out.add(p);
+        }
+        return Collections.unmodifiableList(out);
+    }
+
     // ── Getters ────────────────────────────────────────────────────────────
 
     public int getCooldown()          { return cooldown; }
     public int getMaxAttempts()        { return maxAttempts; }
     public int getPoolSize()           { return poolSize; }
     public int getTeleportDelay()      { return teleportDelay; }
-    public int getActionbarDuration()  { return actionbarDuration; }
+    public int getActionbarDuration()  { return 3; }
+    public int getMovedDuration()       { return 3; }
 
     public Sound    getSound()           { return sound; }
     public float    getSoundVolume()     { return soundVolume; }
     public float    getSoundPitch()      { return soundPitch; }
+    public Sound    getStartSound()           { return startSound; }
+    public float    getStartSoundVolume()     { return startSoundVolume; }
+    public float    getStartSoundPitch()      { return startSoundPitch; }
+    public Sound    getCancelSound()           { return cancelSound; }
+    public float    getCancelSoundVolume()     { return cancelSoundVolume; }
+    public float    getCancelSoundPitch()      { return cancelSoundPitch; }
     public Particle getParticle()        { return particle; }
     public int      getParticleCount()   { return particleCount; }
     public double   getParticleSpreadX() { return particleSpreadX; }
     public double   getParticleSpreadY() { return particleSpreadY; }
     public double   getParticleSpreadZ() { return particleSpreadZ; }
-    public double   getParticleSpeed()   { return particleSpeed; }
+    public double   getParticleSpeed()    { return particleSpeed; }
+
+    public List<Particle> getHelixParticles() { return helixParticles; }
 
     public DimensionConfig getOverworld() { return overworld; }
     public DimensionConfig getNether()    { return nether; }
